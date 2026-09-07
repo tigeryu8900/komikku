@@ -30,6 +30,7 @@ import exh.md.handlers.AzukiHandler
 import exh.md.handlers.BilibiliHandler
 import exh.md.handlers.ComikeyHandler
 import exh.md.handlers.FollowsHandler
+import exh.md.handlers.KMangaHandler
 import exh.md.handlers.MangaHandler
 import exh.md.handlers.MangaHotHandler
 import exh.md.handlers.MangaPlusHandler
@@ -126,8 +127,12 @@ class MangaDex(delegate: HttpSource, val context: Context) :
     private val namicomiHandler by lazy {
         NamicomiHandler(network.client, network.defaultUserAgentProvider())
     }
+    private val kMangaHandler by lazy {
+        KMangaHandler(network.client)
+    }
     private val pageHandler by lazy {
         PageHandler(
+            delegate,
             headers,
             mangadexService,
             mangaPlusHandler,
@@ -136,6 +141,7 @@ class MangaDex(delegate: HttpSource, val context: Context) :
             azukHandler,
             mangaHotHandler,
             namicomiHandler,
+            kMangaHandler,
         )
     }
 
@@ -233,11 +239,11 @@ class MangaDex(delegate: HttpSource, val context: Context) :
 
     @Deprecated("Use the suspend API instead", replaceWith = ReplaceWith("getPageList"))
     override fun fetchPageList(chapter: SChapter): Observable<List<Page>> {
-        return runAsObservable { pageHandler.fetchPageList(chapter, usePort443Only(), dataSaver(), delegate) }
+        return runAsObservable { pageHandler.fetchPageList(chapter, usePort443Only(), dataSaver()) }
     }
 
     override suspend fun getPageList(chapter: SChapter): List<Page> {
-        return pageHandler.fetchPageList(chapter, usePort443Only(), dataSaver(), delegate)
+        return pageHandler.fetchPageList(chapter, usePort443Only(), dataSaver())
     }
 
     override suspend fun getImage(page: Page): Response {

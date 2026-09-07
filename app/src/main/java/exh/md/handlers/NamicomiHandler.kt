@@ -19,7 +19,7 @@ class NamicomiHandler(currentClient: OkHttpClient, userAgent: String) {
 
     private val apiUrl = "https://api.namicomi.com"
 
-    private val headers = Headers.Builder()
+    val headers = Headers.Builder()
         .add("User-Agent", userAgent)
         .build()
 
